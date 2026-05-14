@@ -6,12 +6,16 @@ def main():
     if len(sys.argv) > 1:
         prompt = " ".join(sys.argv[1:])
     else:
-        print("Enter your prompt (Ctrl+D to submit):")
-        prompt = sys.stdin.read().strip()
-
-    if not prompt:
-        print("No prompt provided.", file=sys.stderr)
-        sys.exit(1)
+        prompt = ""
+        while not prompt:
+            try:
+                prompt = input("Enter your prompt: ").strip()
+            except EOFError:
+                print()
+                sys.exit(0)
+            except KeyboardInterrupt:
+                print()
+                sys.exit(0)
 
     client = anthropic.Anthropic()
 
@@ -22,8 +26,8 @@ def main():
     ) as stream:
         for text in stream.text_stream:
             print(text, end="", flush=True)
-
-    print()
+    
+    print()  # Ensure we end with a newline
 
 if __name__ == "__main__":
     main()
